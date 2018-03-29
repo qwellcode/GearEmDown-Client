@@ -1,5 +1,5 @@
-// Websocket Server Address (DNS)
-var websocket_server_addr = "";
+// Websocket Server Address (DNS). "127.0.0.1" for local development.
+var websocket_server_addr = "127.0.0.1";
 
 // Websocket Server Port
 var websocket_server_port = 8080;
