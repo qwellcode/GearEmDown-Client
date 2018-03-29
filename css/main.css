@@ -1,0 +1,143 @@
+body
+{
+    font-family: "Caladea", "sans-serif";
+}
+
+h1
+{
+    margin: 20px;
+}
+
+#connection_infos
+{
+    display: none;
+}
+
+#HUD
+{
+    position: absolute;
+    z-index: 1;
+}
+
+#HUD ul
+{
+    list-style: none;
+}
+
+#HUD ul span
+{
+    font-style: italic;
+}
+
+#lastErr
+{
+    color: red;
+}
+
+.infoBox
+{
+    display: none;
+}
+
+#cursor_info_top, #tipp
+{
+    margin-bottom: 40px;
+}
+
+#cursor_info_bottom
+{
+    margin-bottom: -100px;
+
+    vertical-align: top;
+    text-align: center;
+}
+
+#help_page
+{
+    width: 600px;
+    margin-left: -300px;
+    margin-bottom: -40px;
+    display: none;
+}
+#help_page th
+{
+    text-align: right;
+}
+#tipp, #help_page div
+{
+    text-align: center;
+}
+
+.cursor-infoBox
+{
+    position: fixed;
+    bottom: 50%;
+    left: 50%;
+    width: 300px;
+    margin-left: -150px;
+
+    cursor: default;
+    user-select: none;
+    opacity: 0.9;
+
+    font-size: 20px;
+    box-shadow: 3px 3px 5px black;
+    color: white;
+    background-color: saddlebrown;
+    border: solid 3px white;
+    padding: 5px;
+}
+.cursor-infoBox:empty
+{
+    padding: 0px;
+    border: none;
+}
+.cursor-infoBox p:first-child
+{
+    margin: 0px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: underline;
+}
+.cursor-infoBox table
+{
+    width: 100%;
+    text-align: left;
+    color: white;
+    margin: 7px 0px;
+}
+.cursor-infoBox table th
+{
+    text-align: center;
+    padding-right: 15px;
+}
+.cursor-infoBox p
+{
+    margin: 10px 0px 0px 0px;
+}
+.cursor-infoBox .money
+{
+    display: inline-block;
+    float: right;
+    text-shadow: 0px 0px 5px black;
+    color: yellow;
+}
+.cursor-infoBox .money:after
+{
+    content: " C";
+    /* Other cool C's: çϲсҀ */
+}
+.cursor-infoBox .positive:before
+{
+    content: "+";
+}
+.cursor-infoBox .positive
+{
+    color: #00E100;
+}
+.cursor-infoBox .negative
+{
+    color: red;
+    font-weight: bold;
+    text-shadow: 0px 0px 5px black;
+}

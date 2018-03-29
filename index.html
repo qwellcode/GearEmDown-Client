@@ -1,0 +1,391 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="css/main.css"/>
+    <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+    <script src="config.js"></script>
+    <script src="components/fpslookcontrols.min.js"></script>
+    <script src="components/billboard.js"></script>
+    <script src="components/gamecursor.js"></script>
+    <script src="components/intersectable.js"></script>
+    <script src="components/possync.js"></script>
+    <script src="components/enemy.js"></script>
+    <script src="components/lookat.js"></script>
+    <script src="components/customlookcontrolls.js"></script>
+    <script src="components/towerradius.js"></script>
+  </head>
+  <body>
+    <header id="HUD">
+        <h1>Connection Status: <span id="connectionStatus">offline</span></h1>
+        <ul id="connection_infos">
+            <li>You: <span id="client">No name</span></li>
+            <li>Current player: <span id="player">No player</span></li>
+            <li>Other connected clients:
+                <ul id="clientList">
+                    <li><span>No other clients.</span></li>
+                </ul>
+            </li>
+            <!--<li>Receive fake MSG: <input type="text" onchange="fakeMSG(this.value)"/></li>-->
+            <li id="lastErr"></li>
+        </ul>
+        <div class="cursor-infoBox" id="cursor_info_top"></div>
+        <div class="cursor-infoBox" id="cursor_info_bottom"></div>
+        <div class="cursor-infoBox" id="tipp">
+            Press "H" for help and game instructions.
+        </div>
+        <div class="cursor-infoBox" id="help_page">
+            <p>
+                Tower Defense
+            </p>
+            <p>
+                Defend your base from the invading enemies by building towers along the path! Earn Coins by destroying enemy units and use them to build towers and upgrades.
+                When an enemy reaches your base, it loses health. If it drops to zero, you lose. Survive 20 waves to win the game!
+            </p>
+            <Table>
+                <tr><th>Esc</th><td>Unlock the mouse from the window.</td></tr>
+                <tr><th>W, A, S, D</th><td>Move around.</td></tr>
+                <tr><th>Left Mouse Button</th><td>Interact.</td></tr>
+                <tr><th>Space</th><td>Toggle selection- and building mode.</td></tr>
+                <tr><th>H</th><td>Bring up this menu or close it.</td></tr>
+            </Table>
+            <div><button>ok</button></div>
+        </div>
+    </header>
+    <a-scene>
+    	<a-assets stats>
+    		<a-asset-item id="towerdefense-obj" src="models/Board_combined.obj"></a-asset-item>
+            <a-asset-item id="towerdefense-mtl" src="models/Board_combined.mtl"></a-asset-item>
+
+            <a-asset-item id="TowerSingleHitDmg-obj" src="models/towers/Tower_Single_Hit_Dmg.obj"></a-asset-item>
+            <a-asset-item id="TowerSingleHitDmg-mtl" src="models/towers/Tower_Single_Hit_Dmg.mtl"></a-asset-item>
+            <img id="icon_TowerSingleHitDmg" src="textures/icon_TowerSingleHitDmg.png">
+            <a-asset-item id="TowerSingleConstantDmg-obj" src="models/towers/Tower_Single_Constant_Dmg.obj"></a-asset-item>
+            <a-asset-item id="TowerSingleConstantDmg-mtl" src="models/towers/Tower_Single_Constant_Dmg.mtl"></a-asset-item>
+            <img id="icon_TowerSingleConstantDmg" src="textures/icon_TowerSingleConstantDmg.png">
+            <a-asset-item id="TowerAoEDmg-obj" src="models/towers/Tower_AoE_Dmg.obj"></a-asset-item>
+            <a-asset-item id="TowerAoEDmg-mtl" src="models/towers/Tower_AoE_Dmg.mtl"></a-asset-item>
+            <img id="icon_TowerAoEDmg" src="textures/icon_TowerAoEDmg.png">
+            <a-asset-item id="TowerSlow-obj" src="models/towers/Tower_Slow.obj"></a-asset-item>
+            <a-asset-item id="TowerSlow-mtl" src="models/towers/Tower_Slow.mtl"></a-asset-item>
+            <img id="icon_TowerSlow" src="textures/icon_TowerSlow.png">
+            <a-asset-item id="TowerBuff-obj" src="models/towers/Tower_Buff.obj"></a-asset-item>
+            <a-asset-item id="TowerBuff-mtl" src="models/towers/Tower_Buff.mtl"></a-asset-item>
+            <img id="icon_TowerBuff" src="textures/icon_TowerBuff.png">
+            <a-asset-item id="Placeholder-obj" src="models/towers/Placeholder.obj"></a-asset-item>
+            <a-asset-item id="Placeholder-mtl" src="models/towers/Placeholder.mtl"></a-asset-item>
+
+            <a-asset-item id="EnemyAirShip-obj" src="models/enemies/Enemy_AirShip.obj"></a-asset-item>
+            <a-asset-item id="EnemyAirShip-mtl" src="models/enemies/Enemy_AirShip.mtl"></a-asset-item>
+            <a-asset-item id="EnemyArrow-obj" src="models/enemies/Enemy_nArrow.obj"></a-asset-item>
+            <a-asset-item id="EnemyArrow-mtl" src="models/enemies/Enemy_nArrow.mtl"></a-asset-item>
+            <a-asset-item id="EnemySteamTank-obj" src="models/enemies/Enemy_SteamTank.obj"></a-asset-item>
+            <a-asset-item id="EnemySteamTank-mtl" src="models/enemies/Enemy_SteamTank.mtl"></a-asset-item>
+
+    		<img id="sky_texture" src="textures/sky_sphere.jpg">
+    		<img id="basiccursor" src="textures/basiccursor.png">
+            <img id="buttoncursor" src="textures/buttoncursor.png">
+            <img id="hammer" src="textures/hammer.png">
+            <img id="moneybag" src="textures/moneybag.png">
+            <img id="abort_icon" src="textures/icon_abort.png">
+            <img id="start_game_icon" src="textures/btn_start_game.png">
+            <img id="end_game_icon" src="textures/btn_end_game.png">
+            <img id="next_round_icon" src="textures/btn_next_round.png">
+            <img id="sell_icon" src="textures/icon_sell.png">
+            <img id="upgrade01_icon" src="textures/icon_upgrade_01.png">
+            <img id="upgrade02_icon" src="textures/icon_upgrade_02.png">
+            <img id="upgrade03_icon" src="textures/icon_upgrade_03.png">
+            <img id="upgrade04_icon" src="textures/icon_upgrade_04.png">
+    	</a-assets>
+
+        <!-- ENEMY PRE-LOAD -->
+        <a-entity id="enemy_kind_1" obj-model="obj: #EnemyArrow-obj; mtl: #EnemyArrow-mtl;" visible="false"></a-entity>
+        <a-entity id="enemy_kind_2" obj-model="obj: #EnemySteamTank-obj; mtl: #EnemySteamTank-mtl;" visible="false"></a-entity>
+        <a-entity id="enemy_kind_3" obj-model="obj: #EnemyAirShip-obj; mtl: #EnemyAirShip-mtl;" visible="false"></a-entity>
+        <!-- /ENEMY PRE-LOAD -->
+
+    	<!-- CAMERA -->
+		<a-entity id="main_camera"
+                  position="0.0 0.0 2.0"
+                  camera="active: true"
+                  wasd-controls=""
+                  fps-look-controls=""
+                  aframe-injected=""
+                  data-aframe-inspector-original-camera=""
+                  data-aframe-inspector="default-camera">
+			<a-entity id="cursor" 
+                        cursor="fuse: false; fuseTimeout: 500"
+                        scale="1.25 1.25 1.25"
+                        position="0 0 -0.01" 
+                        geometry="primitive: plane; width:0.0005; height:0.0005" 
+                        material="alphaTest:0.5; transparent:true; src:#basiccursor; flatShading:true;"
+                        raycaster="objects: .tower, .uiButton; direction: 0 0 -1"
+                        gamecursor></a-entity>
+		</a-entity>
+		<!-- /CAMERA -->
+
+		<!-- TABLE MODEL -->
+    	<a-entity id="td_table"
+                  position="0 0.831 0"
+                  obj-model="obj:#towerdefense-obj; mtl:#towerdefense-mtl"
+                  rotation="0 180 0">
+    		<!-- MONEY UI -->
+    	    <a-entity id="money_ui"
+                      position="0 6 2"
+                      scale="2 2 1"
+                      billboard="target: #main_camera; yOffset: 180">
+    			<a-image id="img_money_ui"
+                         material="alphaTest: 0.9"
+                         position="-0.025 0 0"
+                         src="#moneybag"></a-image>
+    			<a-text id="txt_money_ui" 
+                        position="0.4 0 0"
+                        scale="4 4 1"
+                        value="---"
+                        text="color: yellow"></a-text>
+	        </a-entity>
+    		<!-- /MONEY UI -->
+
+            <!-- GAME MENU -->
+            <a-entity id="gameMenu"
+                      position="0 17 0"
+                      scale="10 10 1"
+                      billboard="target: #main_camera; yOffset: 180">
+                <!-- START GAME BUTTON -->
+                <a-image id="btn_start_game"
+                         material="alphaTest: 0.9"
+                         class="uiButton"
+                         position="-0.35 0 0"
+                         scale="0.64 0.32 0.1"
+                         src="#start_game_icon"
+                         intersectable></a-image>
+                <!-- END GAME BUTTON -->
+                <a-image id="btn_end_game"
+                         material="alphaTest: 0.9"
+                         class="uiButton"
+                         position="-0.35 0 0"
+                         scale="0.64 0.32 0.1"
+                         src="#end_game_icon"
+                         intersectable="active: false;"
+                         visible="false"></a-image>
+                <!-- NEXT ROUND BUTTON -->
+                <a-image id="btn_next_round"
+                         material="alphaTest: 0.9"
+                         class="uiButton"
+                         position="0.35 0 0"
+                         scale="0.64 0.32 0.1"
+                         src="#next_round_icon"
+                         intersectable="active: false;"s
+                         visible="false"></a-image>
+            </a-entity>
+            <!-- /GAME MENU -->
+
+    		<!-- BASE HEALTH UI-->
+    	   <a-entity id="txt_baseHealth"
+                     position="13.5 7 -15"
+                     rotation="20 50 10"
+                     scale="20 20 1"
+                     text__basehealth="value:Health: --;color:#ff0404;align:center"
+                     billboard="target: #main_camera; yOffset: 180"></a-entity>
+    		<!-- /Base HEALTH UI -->
+
+    		<!-- WAVE UI -->
+    	   <a-entity id="txt_wave"
+                     position="-13.5 7 -15"
+                     rotation="20 50 10"
+                     scale="20 20 1"
+                     text__wave="value:Wave: --; color: #DCDCDC; align: center"
+                     billboard="target: #main_camera; yOffset: 180"></a-entity>
+    		<!-- /WAVE UI -->
+    	</a-entity>
+    	<!-- /TABLE MODEL-->
+
+        <!-- GROUND -->
+        <a-entity id="ground"
+                  rotation="270 0 0"
+                  scale="10 10 10"
+                  geometry="primitive: plane"
+                  material="color: #804000"></a-entity>
+        <!-- /GROUND -->
+
+        <!-- RAYCAST TOWER PLACEMENT -->
+        <a-entity id="towerPlacementLayer" 
+                    class="towerplacement" 
+                    position="0 0 0"
+                    scale="1.962 1.962 1.962"
+                    geometry="" 
+                    intersectable
+                    material="visible: false"></a-entity>
+        <!-- /RAYCAST TOWER PLACEMENT -->
+
+        <!-- TOWER PLACEMENT DUMMY -->
+        <a-entity id="placementDummy"
+                  obj-model="obj: #Placeholder-obj; mtl: #Placeholder-mtl;"
+                  visible="false"
+                  towerradius="offsetY: 0.4; visible: true">
+            <!-- TOWER SELECTION -->
+            <a-entity id="tower_selection"
+                      visible="false"
+                      position="0 5 0"
+                      scale="2 2 2"
+                      billboard="target: #main_camera">
+                <a-image id="selection_TowerSingleHitDmg"
+                         material="alphaTest: 0.2"
+                         class="towerSelectOption"
+                         position="-2 0 0"
+                         src="#icon_TowerSingleHitDmg"
+                         data-prefabid="1"
+                         intersectable>
+                    <!-- Description -->
+                    <div class="infoBox">
+                        <p>Crystal Tower</p>
+                        <p>
+                            Utilizes a crystal to bundle light and destroy its enemys with lasers.
+                            Causes damage on a single enemy, until it is destroyed or out of reach.
+                            Always attacks the most advanced enemy on the path.
+                        </p>
+                        <table>
+                            <tr>
+                                <th>Damage</th>
+                                <th>Fire Rate</th>
+                                <th>Radius</th>
+                            </tr>
+                            <tr>
+                                <td class="dmg">?</td>
+                                <td class="fireRate">?</td>
+                                <td class="radius">?</td>
+                            </tr>
+                        </table>
+                        <p class="price">Price: <span class='money'>?</span></p>
+                    </div>
+                </a-image>
+                <a-image id="selection_TowerSingleConstantDmg"
+                         material="alphaTest: 0.2"
+                         class="towerSelectOption"
+                         position="-1 0 0"
+                         src="#icon_TowerSingleConstantDmg"
+                         data-prefabid="5"
+                         intersectable>
+                    <!-- Description -->
+                    <div class="infoBox">
+                        <p>Pipe Beam</p>
+                        <p>
+                            Concentrates on a single enemy and damages it with a constant laser until it is destroyed.
+                            Has low damage, but the highest firerate of all towers. Always attacks the most advanced enemy on the path.
+                        </p>
+                        <table>
+                            <tr>
+                                <th>Damage</th>
+                                <th>Fire Rate</th>
+                                <th>Radius</th>
+                            </tr>
+                            <tr>
+                                <td class="dmg">?</td>
+                                <td class="fireRate">?</td>
+                                <td class="radius">?</td>
+                            </tr>
+                        </table>
+                        <p class="price">Price: <span class='money'>?</span></p>
+                    </div>
+                </a-image>
+                <a-image id="selection_TowerAoEDmg"
+                         material="alphaTest: 0.2"
+                         class="towerSelectOption"
+                         position="0 0 0"
+                         src="#icon_TowerAoEDmg"
+                         data-prefabid="2"
+                         intersectable>
+                    <!-- Description -->
+                    <div class="infoBox">
+                        <p>Buzz Coil</p>
+                        <p>
+                            Generates electricity, which is discharged explosively onto the path.
+                            Possesses an area of attack, which damages multiple enemys at once.
+                            Focuses on the most advanced enemy on the path.
+                        </p>
+                        <table>
+                            <tr>
+                                <th>Damage</th>
+                                <th>Fire Rate</th>
+                                <th>Radius</th>
+                            </tr>
+                            <tr>
+                                <td class="dmg">?</td>
+                                <td class="fireRate">?</td>
+                                <td class="radius">?</td>
+                            </tr>
+                        </table>
+                        <p class="price">Price: <span class='money'>?</span></p>
+                        <!--<p class="negative">Unlock in wave 5</p>-->
+                    </div>
+                </a-image>
+                <a-image id="selection_TowerSlow"
+                         material="alphaTest: 0.2"
+                         class="towerSelectOption"
+                         position="1 0 0"
+                         src="#icon_TowerSlow"
+                         data-prefabid="3"
+                         intersectable>
+                    <!-- Description -->
+                    <div class="infoBox">
+                        <p>Steam Mill</p>
+                        <p>
+                            Slows enemys in its radius using hot steam.
+                            Does not cause damage, but the effect is applied constantly to all enemys within its reach.
+                            Develops its full potential in combination with other towers.
+                        </p>
+                        <table>
+                            <tr>
+                                <th>Slow Multiplier</th>
+                                <th>Radius</th>
+                            </tr>
+                            <tr>
+                                <td class="slow">?</td>
+                                <td class="radius">?</td>
+                            </tr>
+                        </table>
+                        <p class="price">Price: <span class='money'>?</span></p>
+                        <!--<p class="negative">Unlock in wave 10</p>-->
+                    </div>
+                </a-image>
+                <a-image id="selection_TowerBuff"
+                         material="alphaTest: 0.2"
+                         class="towerSelectOption"
+                         position="2 0 0"
+                         src="#icon_TowerBuff"
+                         data-prefabid="4"
+                         intersectable>
+                    <div class="infoBox">
+                        <p>Enhance Lab</p>
+                        <p>
+                            Does not attack, but supports other towers in its reach.
+                            The type of enhancement is chosen when the tower is upgraded.
+                            Towers can not be supported by two of the same types of Enhancement Labs.
+                        </p>
+                        <table>
+                            <tr>
+                                <th>Radius</th>
+                            </tr>
+                            <tr>
+                                <td class="radius">?</td>
+                            </tr>
+                        </table>
+                        <p class="price">Price: <span class='money'>?</span></p>
+                        <!--<p class="negative">Unlock in wave 20</p>-->
+                    </div>
+                </a-image>
+            </a-entity>
+            <!-- /TOWER SELECTION -->
+        </a-entity>
+        <!-- /TOWER PLACEMENT DUMMY -->
+
+    	<!-- SKYBOX -->
+    	<a-sky color="#EEEEFF" material="src:#sky_texture"></a-sky>
+    	<!-- /SKYBOX -->
+    </a-scene>
+
+    <script src="js/protocol.js"></script>
+    <script src="js/enemymanager.js"></script>
+    <script src="js/towermanager.js"></script>
+    <script src="js/gamestate.js"></script>
+    <script src="js/update_ui.js"></script>
+  </body>
+</html>
