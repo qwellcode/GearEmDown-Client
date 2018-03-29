@@ -3,14 +3,6 @@
 This is a tower defense game running on a browser powered by A-Frame. https://aframe.io/
 It needs to be hosted on a webserver like every other website.
 
-### Server - Installation ###
-
-The directory "Server" contains the server application and the executable.
-There are no dependencies to this directory. Copy it where ever you like or leave it there.
-You can start the server with the following command (you can choose another port if you like):
-
-./towerdefense_server.x86_64 -batchmode -nographics -port 8080
-
 ### Client - Installation / Configuration ###
 
 This client connects to a server via. websocket in order to work.
