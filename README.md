@@ -3,8 +3,9 @@
 This is a tower defense game running on a browser developed by **Qwellcode GmbH** and powered by [A-Frame](https://aframe.io/). You can host it on a webserver like every other website. The client then connects to the game server with his browser via. websocket. It's just a visual representation of the game logic which runs on the [server](https://github.com/qSteven/GearEmDown-Server).
 
 ## Game Server
-
-You can download a compiled version of the game server for Linux here: http://qwellcode.com/github/GearEmDown\_Server\_v1.0.zip
+You can download already compiled versions of the server here:
+- [Linux v1.0](http://qwellcode.com/github/GearEmDown_Server_Linux_v1.0.zip)
+- [Windows v1.0](http://qwellcode.com/github/GearEmDown_Server_Windows_v1.0.zip)
 
 ## Installation / Configuration
 
