@@ -4,8 +4,8 @@ This is a tower defense game running on a browser developed by **Qwellcode GmbH*
 
 ## Game Server
 You can download already compiled versions of the server here:
-- [Linux v1.0](http://qwellcode.com/github/GearEmDown_Server_Linux_v1.0.zip)
-- [Windows v1.0](http://qwellcode.com/github/GearEmDown_Server_Windows_v1.0.zip)
+- [Linux v1.1](http://qwellcode.com/github/GearEmDown_Server_Linux_v1.1.zip)
+- [Windows v1.1](http://qwellcode.com/github/GearEmDown_Server_Windows_v1.1.zip)
 
 ## Installation / Configuration
 
