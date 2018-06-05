@@ -126,7 +126,7 @@ connection.onclose = function(msg)
 connection.onerror = function(msg)
 {
 	connectioErrorPrompt();
-	document.getElementById("lastErr").innerHTML = "An error accrued.";
+	document.getElementById("lastErr").innerHTML = "An error occurred.";
 };
 // ==========================================================================================================
 
